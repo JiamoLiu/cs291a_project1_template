@@ -51,7 +51,6 @@ def main(event:, context:)
 
 
   if (get_method(json) == 'POST')
-    puts get_body(json)
     return response(body:{"token"=>generate_token(get_body(json))},status:201)
   end
 
@@ -64,7 +63,7 @@ def valid_token?(token, method,path)
   if (!(auth_ep[method] == path))
     return true
   end
-  puts token.sub("Bearer ","")
+  #puts token.sub("Bearer ","")
   
   JWT.decode token.sub("Bearer ",""), ENV['JWT_SECRET'] , true, { algorithm: 'HS256' }
   return true
@@ -126,7 +125,7 @@ def get_media_type(json)
   #puts json
   headers = json["headers"].transform_keys(&:downcase)
   #puts json["headers"]
-  puts headers
+  #puts headers
   #puts headers['content-type']
   return headers['content-type']
 end
@@ -149,11 +148,11 @@ def get_token(json)
 end
 
 def generate_token(data)
-  puts ENV['JWT_SECRET']
+  #puts ENV['JWT_SECRET']
   payload = {
     data: JSON.parse(data.to_s),
-    exp: Time.now.to_i + 4,
-    nbf: Time.now.to_i+2
+    exp: Time.now.to_i + 3,
+    nbf: Time.now.to_i + 1
   }
   token = JWT.encode payload, ENV['JWT_SECRET'] , 'HS256'
   return token
@@ -242,8 +241,8 @@ if $PROGRAM_NAME == __FILE__
   # use it right after
   puts "using it right after"
 
-  puts token
-  puts JSON.parse(token[:body])["token"]
+  #puts token
+  #puts JSON.parse(token[:body])["token"]
   
   PP.pp main(context: {}, event: {
               'headers' => { 'Authorization' => "Bearer #{JSON.parse(token[:body])["token"]}",
