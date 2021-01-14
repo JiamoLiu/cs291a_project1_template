@@ -43,7 +43,7 @@ def main(event:, context:)
 
 
   if (get_method(json) == 'POST')
-    return response(body:generate_token(),status:201)
+    return response(body:{"token"=>generate_token()},status:201)
   end
 
   return response(status:200)
