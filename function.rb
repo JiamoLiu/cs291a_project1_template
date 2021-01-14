@@ -145,7 +145,7 @@ end
 def generate_token(data)
   ENV['JWT_SECRET'] = "default secret"
   payload = {
-    data: data,
+    data: data.to_s,
     exp: Time.now.to_i + 1,
     nbf: Time.now.to_i
   }
@@ -168,7 +168,7 @@ if $PROGRAM_NAME == __FILE__
 
   # Call /token
   PP.pp main(context: {}, event: {
-               'body' => '{"name": "bboe"}',
+               'body' => '{}',
                'headers' => { 'Content-Type' => 'application/json' },
                'httpMethod' => 'POST',
                'path' => '/token'
