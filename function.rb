@@ -43,7 +43,7 @@ def main(event:, context:)
 
 
   if (get_method(json) == 'POST')
-    return response(status:201)
+    return response(body:generate_token(),status:201)
   end
 
   return response(status:200)
@@ -141,6 +141,18 @@ def get_token(json)
   headers = json["headers"].transform_keys(&:downcase)
   return headers['authorization']
 end
+
+def generate_token()
+  ENV['JWT_SECRET'] = "default secret"
+  payload = {
+    data: { user_id: 128 },
+    exp: Time.now.to_i + 1,
+    nbf: Time.now.to_i
+  }
+  token = JWT.encode payload, ENV['JWT_SECRET'], 'HS256'
+  return token
+end
+
 
 def get_path(json)
   return json['path']
