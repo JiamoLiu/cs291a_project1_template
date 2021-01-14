@@ -56,15 +56,13 @@ def main(event:, context:)
     return response(body:{"token"=>generate_token(get_body(json))},status:201)
   end
 
-  return response(body: get_body_return(json),status:200)
+  return response(body: get_body_return(get_token(json)),status:200)
 end
 
-def get_body_return(json)
-  body = get_body(json)
-  if body ==nil
-    return "{}"
-  end
-  return body
+def get_body_return(token)
+  decoded_token = JWT.decode token.sub("Bearer ",""), ENV['JWT_SECRET'], true, { algorithm: 'HS256' }
+  return decoded_token[0]["data"]
+
 end
 
 
