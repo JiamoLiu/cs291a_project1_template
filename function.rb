@@ -105,7 +105,8 @@ def is_valid_method(method, path)
 end
 
 def is_valid_media(media)
-  #puts media
+  puts "media type is: "
+  puts media
   if (!(media == 'application/json'))
     return false
   end
@@ -126,7 +127,7 @@ def get_media_type(json)
   headers = json["headers"].transform_keys(&:downcase)
   #puts json["headers"]
   #puts headers
-  #puts headers['content-type']
+  puts headers['content-type']
   return headers['content-type']
 end
 
@@ -151,8 +152,8 @@ def generate_token(data)
   #puts ENV['JWT_SECRET']
   payload = {
     data: JSON.parse(data.to_s),
-    exp: Time.now.to_i + 3,
-    nbf: Time.now.to_i + 1
+    exp: Time.now.to_i + 4,
+    nbf: Time.now.to_i + 2
   }
   token = JWT.encode payload, ENV['JWT_SECRET'] , 'HS256'
   return token
@@ -245,7 +246,7 @@ if $PROGRAM_NAME == __FILE__
   #puts JSON.parse(token[:body])["token"]
   
   PP.pp main(context: {}, event: {
-              'headers' => { 'Authorization' => "Bearer #{JSON.parse(token[:body])["token"]}",
+              'headers' => { 'AuthOrization' => "Bearer #{JSON.parse(token[:body])["token"]}",
                              'Content-Type' => 'application/json' },
               'httpMethod' => 'GET',
               'path' => '/'
