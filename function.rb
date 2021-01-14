@@ -56,8 +56,18 @@ def main(event:, context:)
     return response(body:{"token"=>generate_token(get_body(json))},status:201)
   end
 
-  return response(body: get_body(json),status:200)
+  return response(body: get_body_return(json),status:200)
 end
+
+def get_body_return(json)
+  body = get_body(json)
+  if body ==nil
+    return "{}"
+  end
+  return body
+end
+
+
 
 def valid_token?(token, method,path)
   auth_ep = {"GET" => "/"}
