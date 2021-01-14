@@ -43,7 +43,7 @@ def main(event:, context:)
 
 
   if (get_method(json) == 'POST')
-    return response(body:{"token"=>generate_token()},status:201)
+    return response(body:{"token"=>generate_token(get_body(json))},status:201)
   end
 
   return response(status:200)
@@ -142,10 +142,10 @@ def get_token(json)
   return headers['authorization']
 end
 
-def generate_token()
+def generate_token(data)
   ENV['JWT_SECRET'] = "default secret"
   payload = {
-    data: { user_id: 128 },
+    data: data,
     exp: Time.now.to_i + 1,
     nbf: Time.now.to_i
   }
