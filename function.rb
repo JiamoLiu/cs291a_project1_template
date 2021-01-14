@@ -107,6 +107,10 @@ end
 
 def is_valid_media(media)
   puts "media type is: #{media}"
+  if media == nil
+    return true
+
+
   if (!(media == 'application/json'))
     return false
   end
@@ -152,8 +156,8 @@ def generate_token(data)
   #puts ENV['JWT_SECRET']
   payload = {
     data: JSON.parse(data.to_s),
-    exp: Time.now.to_i + 4,
-    nbf: Time.now.to_i + 2
+    exp: Time.now.to_i + 3,
+    nbf: Time.now.to_i + 1
   }
   token = JWT.encode payload, ENV['JWT_SECRET'] , 'HS256'
   return token
