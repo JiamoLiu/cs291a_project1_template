@@ -31,6 +31,7 @@ def main(event:, context:)
     valid_token?(get_token(json),get_method(json),get_path(json))
     rescue JWT::ExpiredSignature
       puts "EXPIRED"
+      return response(status:401)
     rescue JWT::ImmatureSignature
       puts "IMMATURE"
       return response(status:401)
@@ -55,7 +56,7 @@ def main(event:, context:)
     return response(body:{"token"=>generate_token(get_body(json))},status:201)
   end
 
-  return response(status:200)
+  return response(body: get_body(json),status:200)
 end
 
 def valid_token?(token, method,path)
@@ -157,8 +158,8 @@ def generate_token(data)
   #puts ENV['JWT_SECRET']
   payload = {
     data: JSON.parse(data.to_s),
-    exp: Time.now.to_i + 3,
-    nbf: Time.now.to_i + 1
+    exp: Time.now.to_i + 4,
+    nbf: Time.now.to_i + 2
   }
   token = JWT.encode payload, ENV['JWT_SECRET'] , 'HS256'
   return token
