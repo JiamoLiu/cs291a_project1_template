@@ -17,7 +17,7 @@ def main(event:, context:)
 
   json = JSON.parse(jsonStr)
   puts '\n==================================\n'
-  puts "json str:"+json
+  puts "json str:#{json}"
 
   if (!(is_valid_path(get_path(json))))
     return response(status:404)
@@ -106,7 +106,7 @@ def is_valid_method(method, path)
 end
 
 def is_valid_media(media)
-  puts "media type is: "+media
+  puts "media type is: #{media}"
   if (!(media == 'application/json'))
     return false
   end
