@@ -4,18 +4,22 @@ require 'json'
 require 'jwt'
 require 'pp'
 
+
+
+
+
 def main(event:, context:)
   # You shouldn't need to use context, but its fields are explained here:
   # https://docs.aws.amazon.com/lambda/latest/dg/ruby-context.html
   #response(body: event, status: 200)
-  jsonStr = event.to_json
+  jsonStr = event.to_json.gsub('/content-type/i','Content-Type')
   json = JSON.parse(jsonStr)
 
   if (!(is_valid_path(get_path(json))))
     return response(status:404)
   end
 
-  if (!is_valid_method(get_method(json)))
+  if (!is_valid_method(get_method(json), get_path(json)))
     return response(status:405)
   end
 
@@ -66,8 +70,15 @@ def response(body:nil, status: 200)
   }
 end	
 
-def is_valid_method(method)
+def is_valid_method(method, path)
+
+  url_methods = { "GET" => "/", "POST" => "/token"}
+
   if (!(method == 'GET') &&  !(method =='POST'))
+    return false
+  end
+
+  if (!(url_methods[method] == path))
     return false
   end
   return true
@@ -136,6 +147,19 @@ if $PROGRAM_NAME == __FILE__
               'headers' => { 'Content-Type' => 'application/json' },
               'httpMethod' => 'POST',
               'path' => '/abc'
+            })
+
+  PP.pp main(context: {}, event: {
+              'body' => '{"name": "bboe"}',
+              'headers' => { 'Content-Type' => 'application/json' },
+              'httpMethod' => 'GET',
+              'path' => '/token'
+            })
+  PP.pp main(context: {}, event: {
+              'body' => '{"name": "bboe"}',
+              'headers' => { 'Content-TyPe' => 'application/json' },
+              'httpMethod' => 'GET',
+              'path' => '/token'
             })
              
 
