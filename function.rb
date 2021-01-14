@@ -65,7 +65,8 @@ def valid_token?(token, method,path)
     return true
   end
   puts token.sub("Bearer ","")
-  JWT.decode(token.sub("Bearer ",""))
+  
+  JWT.decode token.sub("Bearer ",""), ENV['JWT_SECRET'] , true, { algorithm: 'HS256' }
   return true
 
 end 
@@ -148,7 +149,7 @@ def get_token(json)
 end
 
 def generate_token(data)
-  ENV['JWT_SECRET'] = "NOTASEsssssssssssssssssssssssssfgwegqefqrfqwedafadfgrwgrgCRET"
+  puts ENV['JWT_SECRET']
   payload = {
     data: JSON.parse(data.to_s),
     exp: Time.now.to_i + 4,
