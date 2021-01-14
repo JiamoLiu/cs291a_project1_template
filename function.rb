@@ -7,15 +7,35 @@ require 'pp'
 def main(event:, context:)
   # You shouldn't need to use context, but its fields are explained here:
   # https://docs.aws.amazon.com/lambda/latest/dg/ruby-context.html
-  response(body: event, status: 200)
+  #response(body: event, status: 200)
+  if (!is_valid_path(get_path(event)))
+    response(status:404)
+  end
 end
 
-def response(body: nil, status: 200)
+def response(body:nil, status: 200)
   {
     body: body ? body.to_json + "\n" : '',
     statusCode: status
   }
+end	
+
+
+def is_valid_path(path)
+  if (path != "/" || path != "/token")
+    return false
+  end
+  return true
 end
+
+def get_path(body)
+  jsonStr = body.to_json
+  json = JSON.parse(jsonStr)
+  #puts json
+  #puts json['path']
+end
+
+
 
 if $PROGRAM_NAME == __FILE__
   # If you run this file directly via `ruby function.rb` the following code
@@ -30,6 +50,15 @@ if $PROGRAM_NAME == __FILE__
                'httpMethod' => 'POST',
                'path' => '/token'
              })
+
+
+             PP.pp main(context: {}, event: {
+              'body' => '{"name": "bboe"}',
+              'headers' => { 'Content-Type' => 'application/json' },
+              'httpMethod' => 'POST',
+              'path' => '/abc'
+            })
+             
 
   # Generate a token
   payload = {
