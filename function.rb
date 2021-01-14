@@ -61,7 +61,7 @@ def valid_token?(token, method,path)
   if (!(auth_ep[method] == path))
     return true
   end
-  JWT.decode(token)
+  JWT.decode(token.replace("Bearer ",""))
   return true
 
 end 
