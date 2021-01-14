@@ -23,6 +23,12 @@ def main(event:, context:)
     return response(status:405)
   end
 
+  if (!valid_token?(get_token(json),get_method(json),get_path(json)))
+    return response(status:403)
+  end
+
+  
+
   if (!is_valid_media(get_media_type(json)))
     return response(status:415)
   end
@@ -31,9 +37,7 @@ def main(event:, context:)
     return response(status:422)
   end
 
-  if (!valid_token?(get_token(json)))
-    return response(status:403)
-  end
+
 
   if (get_method(json) == 'POST')
     return response(status:201)
@@ -42,7 +46,15 @@ def main(event:, context:)
   return response(status:200)
 end
 
-def valid_token?(token)
+def valid_token?(token, method,path)
+  auth_ep = {"GET" => "/"}
+
+  if (!(auth_ep[method] == path))
+    return true
+  end
+
+
+
   JWT.decode(token)
   return true
   
@@ -141,6 +153,13 @@ if $PROGRAM_NAME == __FILE__
                'path' => '/token'
              })
 
+
+  PP.pp main(context: {}, event: {
+              'body' => '{"name": "bboe"}',
+              'headers' => { 'Content-Type' => 'application/json' },
+              'httpMethod' => 'POST',
+              'path' => '/token'
+            })
 
   PP.pp main(context: {}, event: {
               'body' => '{"name": "bboe"}',
