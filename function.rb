@@ -43,6 +43,7 @@ def main(event:, context:)
 
 
   if (get_method(json) == 'POST')
+    puts get_body(json)
     return response(body:{"token"=>generate_token(get_body(json))},status:201)
   end
 
@@ -145,7 +146,7 @@ end
 def generate_token(data)
   ENV['JWT_SECRET'] = "default secret"
   payload = {
-    data: data.to_s,
+    data: JSON.parse(data.to_s),
     exp: Time.now.to_i + 1,
     nbf: Time.now.to_i
   }
