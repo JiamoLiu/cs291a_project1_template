@@ -109,6 +109,7 @@ def is_valid_media(media)
   puts "media type is: #{media}"
   if media == nil
     return true
+  end
 
 
   if (!(media == 'application/json'))
