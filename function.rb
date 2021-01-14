@@ -29,9 +29,12 @@ def main(event:, context:)
   begin
     valid_token?(get_token(json),get_method(json),get_path(json))
     rescue JWT::ExpiredSignature
+      puts "EXPIRED"
     rescue JWT::ImmatureSignature
+      puts "IMMATURE"
       return response(status:401)
-    rescue
+    rescue => e
+      puts "An error of type #{e.class} happened, message is #{e.message}"
       return response(status:403)
   end
 
@@ -61,7 +64,8 @@ def valid_token?(token, method,path)
   if (!(auth_ep[method] == path))
     return true
   end
-  JWT.decode(token.replace("Bearer ",""))
+  puts token.sub("Bearer ","")
+  JWT.decode(token.sub("Bearer ",""))
   return true
 
 end 
@@ -144,13 +148,13 @@ def get_token(json)
 end
 
 def generate_token(data)
-  ENV['JWT_SECRET'] = "default secret"
+  ENV['JWT_SECRET'] = "NOTASEsssssssssssssssssssssssssfgwegqefqrfqwedafadfgrwgrgCRET"
   payload = {
     data: JSON.parse(data.to_s),
-    exp: Time.now.to_i + 5,
-    nbf: Time.now.to_i+3
+    exp: Time.now.to_i + 4,
+    nbf: Time.now.to_i+2
   }
-  token = JWT.encode payload, ENV['JWT_SECRET'], 'HS256'
+  token = JWT.encode payload, ENV['JWT_SECRET'] , 'HS256'
   return token
 end
 
@@ -165,7 +169,7 @@ if $PROGRAM_NAME == __FILE__
   # If you run this file directly via `ruby function.rb` the following code
   # will execute. You can use the code below to help you test your functions
   # without needing to deploy first.
-  ENV['JWT_SECRET'] = 'NOTASECRET'
+  ENV['JWT_SECRET'] = "NOTASEsssssssssssssssssssssssssfgwegqefqrfqwedafadfgrwgrgCRET"
 
   # Call /token
   PP.pp main(context: {}, event: {
@@ -222,6 +226,29 @@ if $PROGRAM_NAME == __FILE__
               'headers' => { 'Content-Type' => 'application/json' },
               'httpMethod' => 'POST',
               'path' => '/token'
+            })
+
+
+
+  #gets token
+  puts "getting new token"
+  token = main(context: {}, event: {
+              'body' => '{}',
+              'headers' => { 'Content-Type' => 'application/json' },
+              'httpMethod' => 'POST',
+              'path' => '/token'
+            })
+  # use it right after
+  puts "using it right after"
+
+  puts token
+  puts JSON.parse(token[:body])["token"]
+  
+  PP.pp main(context: {}, event: {
+              'headers' => { 'Authorization' => "Bearer #{JSON.parse(token[:body])["token"]}",
+                             'Content-Type' => 'application/json' },
+              'httpMethod' => 'GET',
+              'path' => '/'
             })
 
   # Generate a token
