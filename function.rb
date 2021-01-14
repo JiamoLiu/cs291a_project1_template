@@ -12,8 +12,11 @@ def main(event:, context:)
   # You shouldn't need to use context, but its fields are explained here:
   # https://docs.aws.amazon.com/lambda/latest/dg/ruby-context.html
   #response(body: event, status: 200)
-  jsonStr = event.to_json.gsub('/content-type/i','Content-Type')
+  jsonStr = event.to_json
+
+
   json = JSON.parse(jsonStr)
+  puts '\n==================================\n'
 
   if (!(is_valid_path(get_path(json))))
     return response(status:404)
@@ -27,7 +30,7 @@ def main(event:, context:)
     return response(status:403)
   end
 
-  
+
 
   if (!is_valid_media(get_media_type(json)))
     return response(status:415)
@@ -70,7 +73,7 @@ def valid_json?(json,method)
   JSON.parse(json)
   return true
   
-  rescue JSON::ParserError => e
+  rescue 
     return false
 end
 
@@ -97,7 +100,7 @@ def is_valid_method(method, path)
 end
 
 def is_valid_media(media)
-  puts media
+  #puts media
   if (!(media == 'application/json'))
     return false
   end
@@ -114,7 +117,12 @@ def get_method(json)
 end
 
 def get_media_type(json)
-  return json["headers"]['Content-Type']
+  #puts json
+  headers = json["headers"].transform_keys(&:downcase)
+  #puts json["headers"]
+  puts headers
+  #puts headers['content-type']
+  return headers['content-type']
 end
 
 
@@ -130,7 +138,8 @@ end
 
 
 def get_token(json)
-  return json['headers']['Authorization']
+  headers = json["headers"].transform_keys(&:downcase)
+  return headers['authorization']
 end
 
 def get_path(json)
