@@ -166,8 +166,8 @@ def generate_token(data)
   #puts ENV['JWT_SECRET']
   payload = {
     data: JSON.parse(data.to_s),
-    exp: Time.now.to_i + 4,
-    nbf: Time.now.to_i + 2
+    exp: Time.now.to_i + 5,
+    nbf: Time.now.to_i + 1
   }
   token = JWT.encode payload, ENV['JWT_SECRET'] , 'HS256'
   return token
