@@ -26,8 +26,12 @@ def main(event:, context:)
     return response(status:405)
   end
 
-  if (!valid_token?(get_token(json),get_method(json),get_path(json)))
-    return response(status:403)
+  begin
+    valid_token?(get_token(json),get_method(json),get_path(json))
+    rescue JWT::ExpiredSignature
+      return response(status:403)
+    rescue
+      return response(status:401)
   end
 
 
@@ -56,14 +60,9 @@ def valid_token?(token, method,path)
   if (!(auth_ep[method] == path))
     return true
   end
-
-
-
   JWT.decode(token)
   return true
-  
-rescue
-    return false
+
 end 
 
 def valid_json?(json,method)
